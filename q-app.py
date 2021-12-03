@@ -17,4 +17,4 @@ app.add_app("Statistical Arbitrage", quantapp.app)
 app.add_app('Support Me',supportme.app)
 
 # The main app
-app.run()
+#app.run()
