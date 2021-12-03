@@ -75,7 +75,7 @@ nbconvert
 nbformat
 nest-asyncio
 networkx
-nltk=
+nltk
 nose
 notebook
 numpy
