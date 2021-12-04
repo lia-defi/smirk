@@ -45,7 +45,14 @@ def app():
             #spread = spread.dropna()
 
             if adfuller(ratio)[1] < 0.5:
-
+                #plot Ratio
+                st.info('Ratio')
+             
+                fig = plt.figure(figsize=(12,6))
+                plt.plot(ratio)
+                plt.xlabel('Period')
+                st.pyplot(fig)
+                
                 df = pd.DataFrame(index=price_1.index)
                 df['sym1'] = price_1
                 df['sym2'] = price_2
@@ -119,7 +126,7 @@ def app():
                 st.write('Maximum Drawdown %',round(MDD,2))
 
             else:
-                st.write('Try different pairs')
+                st.warning('Try different pairs')
     except:
         st.error('Insert the right symbol name')
 #run in the terminal:
