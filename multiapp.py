@@ -22,7 +22,7 @@ class MultiApp:
 
     def run(self):
         # app = st.sidebar.radio(
-        app = st.selectbox(
+        app = st.sidebar.selectbox(
             'Search Bar',
             self.apps,
             format_func=lambda app: app['title'])
