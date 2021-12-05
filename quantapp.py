@@ -14,6 +14,7 @@ import statsmodels.formula.api as sm
 def app():
 
     st.title('Statistical Arbitrage')
+    st.text("Statistical arbitrage, also referred to as stat arb, is a computationally intensive approach to algorithmically trading financial market assets such as equities and commodities. It involves the simultaneous buying and selling of security portfolios according to predefined or adaptive statistical models.Statistical arbitrage techniques are modern variations of the classic cointegration-based pairs trading strategy. This strategy is based on short-term mean reversion principles coupled with hedging strategies that take care of overall market risk.")
 
     ticker_1 = st.text_input('Insert the symbol of the first ticker','')
     ticker_2 = st.text_input('Insert the symbol of the second ticker','')
