@@ -8,7 +8,7 @@ import supportme
 app = MultiApp()
 
 st.markdown("""
-# Multi-Page App
+# The Smirk
 """)
 
 # Add all your application here
