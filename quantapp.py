@@ -126,7 +126,7 @@ def app():
                 st.write('Maximum Drawdown %',round(MDD,2))
 
             else:
-                st.warning('Try different pairs')
+                st.warning("Ernest P. Chan's words echoed...There is a time and place for everything but data needs to be stationary.")
     except:
         st.error('Insert the right symbol name')
 #run in the terminal:
