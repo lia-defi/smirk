@@ -5,6 +5,10 @@ import home
 import supportme
 # import your app modules here
 
+from PIL import Image
+img = Image.open('stonks.png')
+st.set_page_config(page_title='The Smirk',page_icon=img)
+
 app = MultiApp()
 
 st.markdown("""
