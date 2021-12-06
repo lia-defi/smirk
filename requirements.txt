@@ -6,3 +6,5 @@ numpy
 datetime
 statsmodels
 scikit-learn
+fbprophet
+pyplot
