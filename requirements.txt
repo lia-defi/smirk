@@ -8,4 +8,4 @@ statsmodels
 scikit-learn
 fbprophet
 plotly
-pystan
+pystan==2.18.0.0
