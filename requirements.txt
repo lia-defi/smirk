@@ -6,4 +6,6 @@ numpy
 datetime
 statsmodels
 scikit-learn
-
+plotly
+pystan==2.18.0.0
+fbprophet==0.7.1
