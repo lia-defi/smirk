@@ -51,7 +51,7 @@ def app():
             #spread = spread.dropna()
 
             if adfuller(ratio)[1] < 0.5:
-                with st.spinner("Waiting for the prediction"):
+                with st.spinner("Waiting for..."):
                     #plot Ratio
                     st.info('Ratio')
 
