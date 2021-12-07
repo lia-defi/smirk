@@ -51,85 +51,88 @@ def app():
             #spread = spread.dropna()
 
             if adfuller(ratio)[1] < 0.5:
-                #plot Ratio
-                st.info('Ratio')
-             
-                fig = plt.figure(figsize=(12,6))
-                plt.plot(ratio)
-                plt.xlabel('Period')
-                st.pyplot(fig)
-                
-                df = pd.DataFrame(index=price_1.index)
-                df['sym1'] = price_1
-                df['sym2'] = price_2
-                df = df.dropna()
-                coint_res = ts.coint(df['sym1'],df['sym2'])
-                lookback = 20
-                hedgeRatio=np.full(df.shape[0], np.nan)
-                for t in np.arange(lookback, len(hedgeRatio)):
-                    regress_results=sm.ols(formula="sym1 ~ sym2", data=df[(t-lookback):t]).fit() # Note this can deal with NaN in top row
-                    hedgeRatio[t-1]=regress_results.params[1]
-                yport=np.sum(ts.add_constant(-hedgeRatio)[:, [1,0]]*df, axis=1)
+                with st.spinner("Waiting for the prediction"):
+                    #plot Ratio
+                    st.info('Ratio')
+
+                    fig = plt.figure(figsize=(12,6))
+                    plt.plot(ratio)
+                    plt.xlabel('Period')
+                    st.pyplot(fig)
+
+                    df = pd.DataFrame(index=price_1.index)
+                    df['sym1'] = price_1
+                    df['sym2'] = price_2
+                    df = df.dropna()
+                    coint_res = ts.coint(df['sym1'],df['sym2'])
+                    lookback = 20
+                    hedgeRatio=np.full(df.shape[0], np.nan)
+                    for t in np.arange(lookback, len(hedgeRatio)):
+                        regress_results=sm.ols(formula="sym1 ~ sym2", data=df[(t-lookback):t]).fit() # Note this can deal with NaN in top row
+                        hedgeRatio[t-1]=regress_results.params[1]
+                    yport=np.sum(ts.add_constant(-hedgeRatio)[:, [1,0]]*df, axis=1)
 
 
-                # Bollinger band strategy
-                entryZscore=1
-                exitZscore=0
+                    # Bollinger band strategy
+                    entryZscore=1
+                    exitZscore=0
 
-                MA=yport.rolling(lookback).mean()
-                MSTD=yport.rolling(lookback).std()
-                zScore=(yport-MA)/MSTD
+                    MA=yport.rolling(lookback).mean()
+                    MSTD=yport.rolling(lookback).std()
+                    zScore=(yport-MA)/MSTD
 
-                longsEntry=zScore < -entryZscore
-                longsExit =zScore > -entryZscore
+                    longsEntry=zScore < -entryZscore
+                    longsExit =zScore > -entryZscore
 
-                shortsEntry=zScore > entryZscore
-                shortsExit =zScore < exitZscore
+                    shortsEntry=zScore > entryZscore
+                    shortsExit =zScore < exitZscore
 
-                numUnitsLong=np.zeros(longsEntry.shape)
-                numUnitsLong[:]=np.nan
+                    numUnitsLong=np.zeros(longsEntry.shape)
+                    numUnitsLong[:]=np.nan
 
-                numUnitsShort=np.zeros(shortsEntry.shape)
-                numUnitsShort[:]=np.nan
+                    numUnitsShort=np.zeros(shortsEntry.shape)
+                    numUnitsShort[:]=np.nan
 
-                numUnitsLong[0]=0
-                numUnitsLong[longsEntry]=1
-                numUnitsLong[longsExit]=0
-                numUnitsLong=pd.DataFrame(numUnitsLong)
-                numUnitsLong.fillna(method='ffill', inplace=True)
+                    numUnitsLong[0]=0
+                    numUnitsLong[longsEntry]=1
+                    numUnitsLong[longsExit]=0
+                    numUnitsLong=pd.DataFrame(numUnitsLong)
+                    numUnitsLong.fillna(method='ffill', inplace=True)
 
-                numUnitsShort[0]=0
-                numUnitsShort[shortsEntry]=-1
-                numUnitsShort[shortsExit]=0
-                numUnitsShort=pd.DataFrame(numUnitsShort)
-                numUnitsShort.fillna(method='ffill', inplace=True)
+                    numUnitsShort[0]=0
+                    numUnitsShort[shortsEntry]=-1
+                    numUnitsShort[shortsExit]=0
+                    numUnitsShort=pd.DataFrame(numUnitsShort)
+                    numUnitsShort.fillna(method='ffill', inplace=True)
 
-                numUnits=numUnitsLong+numUnitsShort
-                positions=pd.DataFrame(np.tile(numUnits.values, [1, 2]) * ts.add_constant(-hedgeRatio)[:, [1,0]] *df.values) #  [hedgeRatio -ones(size(hedgeRatio))] is the shares allocation, [hedgeRatio -ones(size(hedgeRatio))].*y2 is the dollar capital allocation, while positions is the dollar capital in each ETF.
-                pnl=np.sum((positions.shift().values)*(df.pct_change().values), axis=1) # daily P&L of the strategy
-                ret=pnl/np.sum(np.abs(positions.shift()), axis=1)
-                
-                
-                #plot strategy performance
-                st.info('Strategy Performance')
-                #cumulative return
-                cumret = pd.DataFrame(np.cumprod(1+ret)-1)
-                cumret = cumret.rename(columns={0:'cum_ret'})                
-                fig = plt.figure(figsize=(12,6))
-                plt.plot(cumret)
-                plt.xlabel('Period')
-                st.pyplot(fig)
-
-                #key metrics
-                st.info('Key Metrics')
-                APR = (np.prod(1+ret)**(252/len(ret))-1)*100
-                SR = np.sqrt(252)*np.mean(ret)/np.std(ret)
-                MDD = np.min(np.cumprod(1+ret) / np.cumprod(1+ret).expanding().max()) -1
+                    numUnits=numUnitsLong+numUnitsShort
+                    positions=pd.DataFrame(np.tile(numUnits.values, [1, 2]) * ts.add_constant(-hedgeRatio)[:, [1,0]] *df.values) #  [hedgeRatio -ones(size(hedgeRatio))] is the shares allocation, [hedgeRatio -ones(size(hedgeRatio))].*y2 is the dollar capital allocation, while positions is the dollar capital in each ETF.
+                    pnl=np.sum((positions.shift().values)*(df.pct_change().values), axis=1) # daily P&L of the strategy
+                    ret=pnl/np.sum(np.abs(positions.shift()), axis=1)
 
 
-                st.write('Annual Percentage Rate %:',round(APR,2))
-                st.write('Sharpe Ratio:',round(SR,2))
-                st.write('Maximum Drawdown %',round(MDD,2))
+                    #plot strategy performance
+                    st.info('Strategy Performance')
+                    #cumulative return
+                    cumret = pd.DataFrame(np.cumprod(1+ret)-1)
+                    cumret = cumret.rename(columns={0:'cum_ret'})                
+                    fig = plt.figure(figsize=(12,6))
+                    plt.plot(cumret)
+                    plt.xlabel('Period')
+                    st.pyplot(fig)
+
+                    #key metrics
+                    st.info('Key Metrics')
+                    APR = (np.prod(1+ret)**(252/len(ret))-1)*100
+                    SR = np.sqrt(252)*np.mean(ret)/np.std(ret)
+                    MDD = np.min(np.cumprod(1+ret) / np.cumprod(1+ret).expanding().max()) -1
+
+
+                    st.write('Annual Percentage Rate %:',round(APR,2))
+                    st.write('Sharpe Ratio:',round(SR,2))
+                    st.write('Maximum Drawdown %',round(MDD,2))
+                    
+                st.success("Done!")
 
             else:
                 st.warning("Ernest P. Chan's words echoed...There is a time and place for everything but data needs to be stationary.")
