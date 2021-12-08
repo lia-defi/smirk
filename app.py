@@ -20,7 +20,7 @@ st.markdown("""
 app.add_app("Home", home.app)
 app.add_app("Statistical Arbitrage", quantapp.app)
 app.add_app('Support Me',supportme.app)
-app.add_app("Machine Learning for Stocks Prediction",machlearn.app)
+#app.add_app("Machine Learning for Stocks Prediction",machlearn.app)
 
 # The main app
 app.run()
