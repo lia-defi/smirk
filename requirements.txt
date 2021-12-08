@@ -6,6 +6,4 @@ numpy
 datetime
 statsmodels
 scikit-learn
-plotly
-pystan
-fbprophet
+
