@@ -9,7 +9,13 @@ import supportme
 from PIL import Image
 img = Image.open('stonks.png')
 st.set_page_config(page_title='The Smirk',page_icon=img)
-
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden; }
+        footer {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
 app = MultiApp()
 
 st.markdown("""
