@@ -8,13 +8,7 @@ from datetime import date, datetime,timedelta
 from statsmodels.tsa.stattools import adfuller
 import statsmodels.tsa.stattools as ts
 import statsmodels.formula.api as sm
-hide_menu_style = """
-        <style>
-        #MainMenu {visibility: hidden; }
-        footer {visibility: hidden;}
-        </style>
-        """
-st.markdown(hide_menu_style, unsafe_allow_html=True)
+
 
 
 def app():
